@@ -59,7 +59,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void findByIdWhenUserNotFound(){
+    void findByIdWhenUserNotFound(){
         when(userService.findById(1L)).thenReturn(null);
         ResponseEntity<?> response = userController.findById("1");
 
