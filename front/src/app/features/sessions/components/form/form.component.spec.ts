@@ -14,16 +14,31 @@ import { SessionService } from 'src/app/services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
 
 import { FormComponent } from './form.component';
+import { Session } from '../../interfaces/session.interface';
+import { data } from 'cypress/types/jquery';
+import { of } from 'rxjs';
 
 describe('FormComponent', () => {
   let component: FormComponent;
   let fixture: ComponentFixture<FormComponent>;
+  let sessionApiService: SessionApiService;
 
   const mockSessionService = {
     sessionInformation: {
       admin: true
     }
-  } 
+  }
+  
+  const mockSession: Session = {
+      id: 1,
+      name: 'name',
+      description: 'desc',
+      date: new Date("2025/12/12"),
+      teacher_id: 1,
+      users: [1,2],
+      createdAt: new Date("2025/12/12"),
+      updatedAt: undefined,
+    };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -51,9 +66,20 @@ describe('FormComponent', () => {
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    sessionApiService = TestBed.inject(SessionApiService);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('sould submit and call create', () => {
+    component.sessionForm?.setValue({name: 'name', date: new Date("2025/12/12"), teacher_id:1, description: 'desc'});
+    component.onUpdate = false;
+    let sessionApiServiceSpy = jest.spyOn(sessionApiService, 'create').mockReturnValue(of(mockSession));
+
+    component.submit();
+
+    expect(sessionApiServiceSpy).toHaveBeenCalledWith(mockSession);
   });
 });

@@ -43,7 +43,7 @@ export class DetailComponent implements OnInit {
   public back() {
     window.history.back();
   }
-
+  
   public delete(): void {
     this.sessionApiService
       .delete(this.sessionId)
