@@ -6,40 +6,41 @@ import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-@AutoConfigureMockMvc
 public class UserControllerTest {
 
-    @Mock
+    @MockBean
     private UserService userService;
 
-    @Mock
+    @MockBean
     private UserMapper userMapper;
-    @Mock
+
+    @MockBean
     private Authentication authentication;
 
-    @Mock
+    @MockBean
     private SecurityContext securityContext;
 
-    @InjectMocks
-    private UserController userController;
     private static User user;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeAll
     static void beforeAll(){
@@ -47,86 +48,78 @@ public class UserControllerTest {
     }
 
     @Test
-    public void findByIdWhenUserExists(){
+    public void findByIdWhenUserExists() throws Exception {
         UserDto userDto = new UserDto(1L, "email@test.com", "last name", "first name", true,"password", LocalDateTime.now(), null);
         when(userService.findById(1L)).thenReturn(user);
         when(userMapper.toDto(user)).thenReturn(userDto);
 
-        ResponseEntity<?> response = userController.findById("1");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(userDto,response.getBody());
+        mockMvc.perform(get("/api/user/"+1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    void findByIdWhenUserNotFound(){
+    void findByIdWhenUserNotFound() throws Exception {
         when(userService.findById(1L)).thenReturn(null);
-        ResponseEntity<?> response = userController.findById("1");
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(get("/api/user/"+1L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    public void findByIdWhenParamInvalid(){
-        ResponseEntity<?> response = userController.findById("invalid");
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    public void findByIdWhenParamInvalid() throws Exception {
+        mockMvc.perform(get("/api/user/invalidParam"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void deleteUser_ShouldReturnOk_WhenUserExistsAndAuthorized() {
+    void deleteUser_ShouldReturnOk_WhenUserExistsAndAuthorized() throws Exception {
         Long userId = 1L;
-
         UserDetails userDetails = mock(UserDetails.class);
-        when(userDetails.getUsername()).thenReturn(user.getEmail());
 
+        when(userDetails.getUsername()).thenReturn(user.getEmail());
         when(userService.findById(userId)).thenReturn(user);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
 
         SecurityContextHolder.setContext(securityContext);
 
-        ResponseEntity<?> response = userController.save(String.valueOf(userId));
+        mockMvc.perform(delete("/api/user/"+1L))
+                .andExpect(status().isOk());
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(userService, times(1)).delete(userId);
+        verify(userService).delete(userId);
     }
 
     @Test
-    void deleteUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
+    void deleteUser_ShouldReturnNotFound_WhenUserDoesNotExist() throws Exception {
         when(userService.findById(anyLong())).thenReturn(null);
 
-        ResponseEntity<?> response = userController.save("1");
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(delete("/api/user/"+1L))
+                .andExpect(status().isNotFound());
         verify(userService, never()).delete(anyLong());
     }
 
     @Test
-    void deleteUser_ShouldReturnUnauthorized_WhenUserIsNotTheOwner() {
+    void deleteUser_ShouldReturnUnauthorized_WhenUserIsNotTheOwner() throws Exception {
         Long userId = 1L;
-
         UserDetails userDetails = mock(UserDetails.class);
-        when(userDetails.getUsername()).thenReturn("autre@test.com");
 
+        when(userDetails.getUsername()).thenReturn("autre@test.com");
         when(userService.findById(userId)).thenReturn(user);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
 
         SecurityContextHolder.setContext(securityContext);
 
-        ResponseEntity<?> response = userController.save(String.valueOf(userId));
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        mockMvc.perform(delete("/api/user/"+1L))
+                .andExpect(status().isUnauthorized());
         verify(userService, never()).delete(anyLong());
     }
 
     @Test
-    void deleteUser_ShouldReturnBadRequest_WhenIdIsInvalid() {
-        ResponseEntity<?> response = userController.save("invalid");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void deleteUser_ShouldReturnBadRequest_WhenIdIsInvalid() throws Exception {
+        mockMvc.perform(delete("/api/user/invalidParam"))
+                .andExpect(status().isBadRequest());
         verify(userService, never()).delete(anyLong());
     }
-
-
 }

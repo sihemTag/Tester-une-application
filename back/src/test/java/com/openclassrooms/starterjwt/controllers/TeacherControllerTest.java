@@ -6,30 +6,34 @@ import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.services.TeacherService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 public class TeacherControllerTest {
 
-    @Mock
+    @MockBean
     TeacherService teacherService;
 
-    @Mock
+    @MockBean
     TeacherMapper teacherMapper;
 
-    @InjectMocks
-    TeacherController teacherController;
+    @Autowired
+    private MockMvc mockMvc;
 
     private static Teacher teacher;
 
@@ -40,33 +44,32 @@ public class TeacherControllerTest {
 
 
     @Test
-    public void findByIdWhenUserExists(){
+    public void findByIdWhenUserExists() throws Exception {
         TeacherDto teacherDto = new TeacherDto(1L,"last name", "first name",LocalDateTime.now(), null);
         when(teacherService.findById(1L)).thenReturn(teacher);
         when(teacherMapper.toDto(teacher)).thenReturn(teacherDto);
 
-        ResponseEntity<?> response = teacherController.findById("1");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(teacherDto,response.getBody());
+       mockMvc.perform(get("/api/teacher/"+1L))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    public void findByIdWhenUserNotFound(){
+    public void findByIdWhenUserNotFound() throws Exception {
         when(teacherService.findById(1L)).thenReturn(null);
-        ResponseEntity<?> response = teacherController.findById("1");
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(get("/api/teacher/"+1L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    public void findByIdWhenParamInvalid(){
-        ResponseEntity<?> response = teacherController.findById("invalid");
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    public void findByIdWhenParamInvalid() throws Exception {
+        mockMvc.perform(get("/api/teacher/invalidParam"))
+                .andExpect(status().isBadRequest());
+        verify(teacherService, never()).findById(anyLong());
     }
 
     @Test
-    public void findAllTestOk(){
+    public void findAllTestOk() throws Exception {
         List<Teacher> teachers = new ArrayList<>();
         List<TeacherDto> teachersDTO = new ArrayList<>();
         teachers.add(teacher);
@@ -76,7 +79,8 @@ public class TeacherControllerTest {
         when(teacherService.findAll()).thenReturn(teachers);
         when(teacherMapper.toDto(teachers)).thenReturn(teachersDTO);
 
-        ResponseEntity<?> response = teacherController.findAll();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(get("/api/teacher"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 }
