@@ -15,7 +15,6 @@ import { SessionApiService } from '../../services/session-api.service';
 
 import { FormComponent } from './form.component';
 import { Session } from '../../interfaces/session.interface';
-import { data } from 'cypress/types/jquery';
 import { of } from 'rxjs';
 
 describe('FormComponent', () => {
@@ -73,7 +72,7 @@ describe('FormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('sould submit and call create', () => {
+   it('sould submit and call create', () => {
     component.sessionForm?.setValue({name: 'name', date: new Date("2025/12/12"), teacher_id:1, description: 'desc'});
     component.onUpdate = false;
     let sessionApiServiceSpy = jest.spyOn(sessionApiService, 'create').mockReturnValue(of(mockSession));

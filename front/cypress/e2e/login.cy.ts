@@ -1,7 +1,9 @@
 describe('Login spec', () => {
-  it('Login successfull', () => {
-    cy.visit('/login')
+  beforeEach(() => {
+    cy.visit('/login');
+  });
 
+  it('Login successfull', () => {
     cy.intercept('POST', '/api/auth/login', {
       body: {
         id: 1,
@@ -23,5 +25,14 @@ describe('Login spec', () => {
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
 
     cy.url().should('include', '/sessions')
-  })
+  });
+
+  it('Should show validation errors when fields are invalid', () => {
+    cy.get('button[type="submit"]').should('be.disabled');
+
+    cy.get('input[formControlName="email"]').type('invalid-email');
+    cy.get('input[formControlName="password"]').type('12');
+
+    cy.get('button[type="submit"]').should('be.disabled');
+  });
 });

@@ -41,3 +41,54 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+declare namespace Cypress {
+    interface Chainable<Subject = any> {
+      login(email: string, password: string): typeof login;
+    }
+ }
+
+function login(email: string, password: string): void {
+    cy.visit('/login')
+
+    cy.intercept('POST', '/api/auth/login', {
+      body: {
+        id: 1,
+        username: 'yoga@studio.com',
+        firstName: 'firstName',
+        lastName: 'lastName',
+        admin: true
+      },
+    }).as("login");
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/session',
+      },
+      [  {
+        "id": 1,
+        "name": "session 1",
+        "date": "2025-03-27T00:00:00.000+00:00",
+        "teacher_id": 1,
+        "description": "desc yoga",
+        "users": [],
+        "createdAt": "2025-01-27T23:11:25",
+        "updatedAt": "2025-01-27T23:11:25"
+    },
+    {
+        "id": 2,
+        "name": "session 2",
+        "date": "2024-01-29T00:00:00.000+00:00",
+        "teacher_id": 1,
+        "description": "desc yoga 2",
+        "users": [],
+        "createdAt": "2025-01-27T18:30:51",
+        "updatedAt": "2025-01-27T18:30:51"
+    }]).as('session')
+
+    cy.get('input[formControlName=email]').type(email)
+    cy.get('input[formControlName=password]').type(`${password}{enter}{enter}`)
+}
+
+Cypress.Commands.add('login', login);
