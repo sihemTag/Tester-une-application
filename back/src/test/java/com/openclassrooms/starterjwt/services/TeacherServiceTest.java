@@ -16,9 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-
+/*
+ @Extend with au lieur de @springboottest
+ supprimer public dans les classe et les methodes
+ ajouter les verify dans les tests unitaires
+ exclure certains packages dans le rapport jacoco
+ tester les exceptions si jamais c'est pas suffisant
+*/
 @SpringBootTest
-public class TeacherServiceTest {
+class TeacherServiceTest {
 
     @Mock
     private TeacherRepository teacherRepository;
