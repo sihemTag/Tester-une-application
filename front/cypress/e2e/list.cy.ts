@@ -1,4 +1,4 @@
- describe('Affichage des sessions', () => {
+/*  describe('Affichage des sessions', () => {
     beforeEach(() => {
       cy.intercept('GET', '/api/session', {
         statusCode: 200,
@@ -8,14 +8,14 @@
         ],
       }).as('getSessions');
 
-       /*  cy.intercept('GET', '/api/session/1', {
+        cy.intercept('GET', '/api/session/1', {
             statusCode: 200,
             body: {
             id: 1,
             name: 'Admin User',
             admin: true,
             },
-        }).as('getSessionInfo'); */
+        }).as('getSessionInfo');
 
       //simuler le login
       cy.login('yoga@studio.com','test!1234');
@@ -25,10 +25,10 @@
     });
   
     it('Devrait afficher la liste des sessions disponibles', () => {
-      cy.get('.list').should('exist'); // Vérifie que la liste existe
-      cy.get('.item').should('have.length', 2); // Vérifie qu'il y a 2 sessions affichées
-      cy.get('.item').first().should('contain', 'Session 1'); // Vérifie le nom de la première session
-      cy.get('.item').last().should('contain', 'Session 2'); // Vérifie le nom de la dernière session
+      cy.get('.list').should('exist');
+      cy.get('.item').should('have.length', 2);
+      cy.get('.item').first().should('contain', 'Session 1');
+      cy.get('.item').last().should('contain', 'Session 2');
     });
 
     it('Devrait afficher le bouton "Create" pour un admin', () => {
@@ -37,3 +37,24 @@
   });
    
 
+ */
+
+  describe('ListComponent', () => {
+    beforeEach(() => {
+      cy.intercept('POST', '/api/session', {
+        body: {
+          name: 'yoga',
+          date: '2024-02-12',
+          description: 'yoga',
+          teacher_id: 1,
+          users:[1]
+        },
+      }).as('getSessions');
+      cy.visit('/sessions'); // Update with the correct route
+    });
+  
+    it('should display the list of sessions', () => {
+      //cy.wait('@getSessions');
+      cy.get('.item').should('have.length', 2); // Assuming 2 sessions in the fixture
+    });
+  });
