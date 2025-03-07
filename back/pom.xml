@@ -106,12 +106,15 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
 
+
 				<executions>
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+
 					</execution>
+
 					<!-- attached to Maven test phase -->
 					<execution>
 						<id>report</id>
@@ -119,14 +122,7 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<excludes>
-								<exclude>**/dto/**</exclude>
-								<exclude>**/models.*</exclude>
-								<exclude>**/mapper.*</exclude>
-								<exclude>**/payload.*</exclude>
-							</excludes>
-						</configuration>
+
 					</execution>
 
 					<execution>
@@ -150,6 +146,14 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/models/**</exclude>
+						<exclude>**/mapper/**</exclude>
+						<exclude>**/payload/**</exclude>
+					</excludes>
+				</configuration>
 
 			</plugin>
 		</plugins>
