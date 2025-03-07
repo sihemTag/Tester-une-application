@@ -105,6 +105,7 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
+
 				<executions>
 					<execution>
 						<goals>
@@ -118,6 +119,14 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/dto/**</exclude>
+								<exclude>**/models.*</exclude>
+								<exclude>**/mapper.*</exclude>
+								<exclude>**/payload.*</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 
 					<execution>
@@ -140,8 +149,8 @@
 							</rules>
 						</configuration>
 					</execution>
-
 				</executions>
+
 			</plugin>
 		</plugins>
 	</build>

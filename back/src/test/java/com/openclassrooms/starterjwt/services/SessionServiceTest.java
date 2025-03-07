@@ -121,7 +121,6 @@ class SessionServiceTest {
     @Test
     public  void noLongerParticipateThrowsException(){
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(session));
-        when(sessionRepository.save(any(Session.class))).thenReturn(session);
         assertThrows(BadRequestException.class, () -> sessionService.noLongerParticipate(1L,2L));
         verify(sessionRepository, never()).save(session);
     }
