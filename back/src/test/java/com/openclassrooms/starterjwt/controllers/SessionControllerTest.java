@@ -9,6 +9,8 @@ import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.SessionService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,9 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-public class SessionControllerTest {
+@SpringBootTest
+class SessionControllerTest {
 
     @MockBean
     SessionService sessionService;
@@ -61,7 +63,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void findByIdWhenSessionExists() throws Exception {
+     void findByIdWhenSessionExists() throws Exception {
         when(sessionService.getById(1L)).thenReturn(session);
         when(sessionMapper.toDto(session)).thenReturn(sessionDto);
 
@@ -71,20 +73,20 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void findByIdWhenSessionNotFound() throws Exception {
+     void findByIdWhenSessionNotFound() throws Exception {
         when(sessionService.getById(1L)).thenReturn(null);
         mockMvc.perform(get("/api/session/"+1L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void findByIdWhenParamInvalid() throws Exception {
+     void findByIdWhenParamInvalid() throws Exception {
         mockMvc.perform(get("/api/session/invalidParam"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void createSessionTestOk() throws Exception {
+     void createSessionTestOk() throws Exception {
         when(sessionMapper.toEntity(any(SessionDto.class))).thenReturn(session);
         when(sessionService.create(any(Session.class))).thenReturn(session);
         when(sessionMapper.toDto(any(Session.class))).thenReturn(sessionDto);
@@ -98,7 +100,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void updateSessionTestOk() throws Exception {
+     void updateSessionTestOk() throws Exception {
         when(sessionMapper.toEntity(any(SessionDto.class))).thenReturn(session);
         when(sessionService.update(anyLong(),any(Session.class))).thenReturn(session);
         when(sessionMapper.toDto(any(Session.class))).thenReturn(sessionDto);
@@ -141,7 +143,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void participateTestOk() throws Exception {
+     void participateTestOk() throws Exception {
         doNothing().when(sessionService).participate(1L, 2L);
 
         mockMvc.perform(post("/api/session/"+1L+"/participate/"+2L))
@@ -151,14 +153,14 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void participateTestThrowsBadRequest() throws Exception {
+     void participateTestThrowsBadRequest() throws Exception {
         mockMvc.perform(post("/api/session/invalidParam/participate/invalidParam"))
                 .andExpect(status().isBadRequest());
         verify(sessionService, never()).participate(anyLong(),anyLong());
     }
 
     @Test
-    public void noLongerParticipateTestOk() throws Exception {
+     void noLongerParticipateTestOk() throws Exception {
         doNothing().when(sessionService).noLongerParticipate(1L, 2L);
 
         mockMvc.perform(delete("/api/session/"+1L+"/participate/"+2L))
@@ -166,7 +168,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void noLongerParticipateTestThrowsBadRequest() throws Exception {
+     void noLongerParticipateTestThrowsBadRequest() throws Exception {
         mockMvc.perform(delete("/api/session/invalidParam/participate/invalidParam"))
                 .andExpect(status().isBadRequest());
         verify(sessionService, never()).noLongerParticipate(anyLong(),anyLong());

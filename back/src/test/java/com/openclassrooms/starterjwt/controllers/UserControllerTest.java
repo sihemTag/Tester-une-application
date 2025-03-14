@@ -6,6 +6,8 @@ import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-public class UserControllerTest {
+ class UserControllerTest {
 
     @MockBean
     private UserService userService;
@@ -48,7 +50,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void findByIdWhenUserExists() throws Exception {
+     void findByIdWhenUserExists() throws Exception {
         UserDto userDto = new UserDto(1L, "email@test.com", "last name", "first name", true,"password", LocalDateTime.now(), null);
         when(userService.findById(1L)).thenReturn(user);
         when(userMapper.toDto(user)).thenReturn(userDto);
@@ -67,7 +69,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void findByIdWhenParamInvalid() throws Exception {
+     void findByIdWhenParamInvalid() throws Exception {
         mockMvc.perform(get("/api/user/invalidParam"))
                 .andExpect(status().isBadRequest());
     }

@@ -6,6 +6,8 @@ import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.services.TeacherService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,9 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-public class TeacherControllerTest {
+@SpringBootTest
+ class TeacherControllerTest {
 
     @MockBean
     TeacherService teacherService;
@@ -44,7 +46,7 @@ public class TeacherControllerTest {
 
 
     @Test
-    public void findByIdWhenUserExists() throws Exception {
+     void findByIdWhenUserExists() throws Exception {
         TeacherDto teacherDto = new TeacherDto(1L,"last name", "first name",LocalDateTime.now(), null);
         when(teacherService.findById(1L)).thenReturn(teacher);
         when(teacherMapper.toDto(teacher)).thenReturn(teacherDto);
@@ -55,21 +57,21 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void findByIdWhenUserNotFound() throws Exception {
+     void findByIdWhenUserNotFound() throws Exception {
         when(teacherService.findById(1L)).thenReturn(null);
         mockMvc.perform(get("/api/teacher/"+1L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void findByIdWhenParamInvalid() throws Exception {
+     void findByIdWhenParamInvalid() throws Exception {
         mockMvc.perform(get("/api/teacher/invalidParam"))
                 .andExpect(status().isBadRequest());
         verify(teacherService, never()).findById(anyLong());
     }
 
     @Test
-    public void findAllTestOk() throws Exception {
+     void findAllTestOk() throws Exception {
         List<Teacher> teachers = new ArrayList<>();
         List<TeacherDto> teachersDTO = new ArrayList<>();
         teachers.add(teacher);

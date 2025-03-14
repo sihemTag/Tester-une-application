@@ -152,6 +152,7 @@
 						<exclude>**/models/**</exclude>
 						<exclude>**/mapper/**</exclude>
 						<exclude>**/payload/**</exclude>
+						<exclude>**/security/**</exclude>
 					</excludes>
 				</configuration>
 

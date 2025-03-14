@@ -61,6 +61,7 @@ class SessionServiceTest {
     public void deleteTestOk(){
         sessionService.delete(1L);
         verify(sessionRepository, times(1)).deleteById(1L);
+        verifyNoMoreInteractions(sessionRepository);
     }
 
     @Test
@@ -69,12 +70,14 @@ class SessionServiceTest {
         sessions.add(session);
         when(sessionRepository.findAll()).thenReturn(sessions);
         assertEquals(sessionService.findAll(), sessions);
+        verifyNoMoreInteractions(sessionRepository);
     }
 
     @Test
     public void getByIdTestOk(){
         when(sessionRepository.findById(anyLong())).thenReturn(Optional.of(session));
         assertEquals(sessionService.getById(1L), session);
+        verifyNoMoreInteractions(sessionRepository);
     }
 
     @Test
@@ -91,6 +94,7 @@ class SessionServiceTest {
         assertEquals(session, updatedSession);
 
         verify(sessionRepository, times(1)).save(any(Session.class));
+        verifyNoMoreInteractions(sessionRepository);
     }
 
     @Test
@@ -116,6 +120,7 @@ class SessionServiceTest {
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
         sessionService.noLongerParticipate(1L,1L);
         verify(sessionRepository, times(1)).save(session);
+        verifyNoMoreInteractions(sessionRepository);
     }
 
     @Test
