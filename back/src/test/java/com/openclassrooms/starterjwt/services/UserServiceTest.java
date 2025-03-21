@@ -38,6 +38,8 @@ class UserServiceTest {
     void getUserByIdUserNotFound(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         assertNull(userService.findById(1L));
+        verify(userRepository).findById(1L);
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
@@ -45,6 +47,7 @@ class UserServiceTest {
         doNothing().when(userRepository).deleteById(1L);
        userService.delete(1L);
        verify(userRepository, times(1)).deleteById(1L);
+       verifyNoMoreInteractions(userRepository);
     }
 
 }

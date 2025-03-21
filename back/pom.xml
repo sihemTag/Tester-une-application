@@ -81,6 +81,12 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.5.1.Final</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -145,6 +151,13 @@
 							</rules>
 						</configuration>
 					</execution>
+					<execution>
+						<id>prepare-agent-integration</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
 				</executions>
 				<configuration>
 					<excludes>
@@ -157,6 +170,7 @@
 				</configuration>
 
 			</plugin>
+
 		</plugins>
 	</build>
 
