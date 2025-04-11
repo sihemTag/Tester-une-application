@@ -25,16 +25,13 @@ describe('SessionService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-  it('should ', () => {
+  it('should login', () => {
     let isLogged = service.isLogged;
     service.logIn(mockSessionInformation);
   
     expect(isLogged).toBeTruthy;
   });
-  it('should ', () => {
+  it('should logout', () => {
     let isLogged = service.isLogged;
     service.logOut();
     expect(isLogged).toBeFalsy;
