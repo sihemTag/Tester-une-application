@@ -89,7 +89,7 @@ describe('DetailComponent', () => {
     component.delete();
 
     expect(sessionApiServiceSpy).toHaveBeenCalledWith('1');
-    //a voir
+
     expect(matSnackBarSpy).toHaveBeenCalled;
     expect(routerSpy).toHaveBeenCalled;
   });

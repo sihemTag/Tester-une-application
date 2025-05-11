@@ -56,4 +56,12 @@ public class JwtUtils {
 
     return false;
   }
+
+  public void setJwtSecret(String jwtSecret) {
+    this.jwtSecret = jwtSecret;
+  }
+
+  public void setJwtExpirationMs(int jwtExpirationMs) {
+    this.jwtExpirationMs = jwtExpirationMs;
+  }
 }
